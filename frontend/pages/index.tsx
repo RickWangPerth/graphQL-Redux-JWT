@@ -1,22 +1,37 @@
-import React from "react";
-import { useState, useEffect } from "react";
+// components/Home.tsx
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { useGetAuthDataQuery } from '../store/authApi';
+import Login from '../components/Login';
+import Register from '../components/Register';
 
-const HomePage = () => {
-  const [data, setData] = useState(null);
+const Home = () => {
+  const token = useSelector((state: RootState) => state.auth.token);
+  const { data: user, error, isLoading } = useGetAuthDataQuery({ token: token ?? '' }, { skip: !token });
 
   useEffect(() => {
-    fetch("http://localhost:8000/test/")
-      .then((res) => res.json())
-      .then((data) => setData(data.data));
-  });
+    if (user) {
+      console.log('User data:', user);
+    }
+    if (error) {
+      console.error('Failed to fetch user data:', error);
+    }
+  }, [user, error]);
+
   return (
     <div>
-      <h1>An Awesome Blog </h1>
-      <h3>On Django, React, Postgres, and Docker </h3>
-
-      <p>{data}</p>
+      <h1>Home Page</h1>
+      {isLoading && <p>Loading...</p>}
+      {user && <p>Welcome, {user.username}</p>}
+      {!user && !isLoading && (
+        <>
+          <Login />
+          <Register />
+        </>
+      )}
     </div>
   );
 };
 
-export default HomePage;
+export default Home;

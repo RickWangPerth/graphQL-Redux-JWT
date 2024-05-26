@@ -37,6 +37,7 @@ services:
       custom_network:
         aliases:
           - ${PROJECT_NAME}_react.local
+          - frontend
 
   backend: 
     build: 
@@ -63,6 +64,7 @@ services:
       custom_network:
         aliases:
           - ${PROJECT_NAME}_django.local
+          - backend
 
 networks:
   custom_network:
